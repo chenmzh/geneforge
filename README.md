@@ -1,5 +1,10 @@
 # GeneForge
 
+[![CI](https://github.com/chenmzh/geneforge/actions/workflows/ci.yml/badge.svg)](https://github.com/chenmzh/geneforge/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+![Python 3.12](https://img.shields.io/badge/python-3.12-blue)
+![React 18](https://img.shields.io/badge/react-18-149eca)
+
 A SnapGene-style **DNA / plasmid workbench** you can host yourself: visualise and edit
 constructs, curate annotations, map restriction sites, run virtual digests and gels,
 design and QC primers, simulate PCR, align sequencing reads — all behind project-level
@@ -23,6 +28,11 @@ access control, an audit trail, a task queue and a documented REST API.
 ---
 
 ## 1. Quick start
+
+```bash
+git clone git@github.com:chenmzh/geneforge.git    # or: gh repo clone chenmzh/geneforge
+cd geneforge
+```
 
 ### Option A — laptop, no Docker (SQLite + in-process queue)
 
@@ -62,6 +72,11 @@ make test             # 87 backend tests (bio engine, I/O, API, RBAC, jobs)
 make smoke            # end-to-end API walk-through against a running server
 make lint             # ruff + tsc
 ```
+
+The same checks run in CI (`.github/workflows/ci.yml`) on every push, plus two extra
+gates: Alembic must round-trip (`upgrade → downgrade → upgrade`) with **no schema drift**
+against the models, and the Docker image is built and smoke-tested (health, SPA, login,
+digest) before the run is considered green.
 
 ---
 
