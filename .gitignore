@@ -1,0 +1,30 @@
+# python
+__pycache__/
+*.py[cod]
+.venv/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# app data
+backend/geneforge.db*
+backend/storage/
+backend/.env
+.env
+
+# node
+node_modules/
+frontend/dist/
+frontend/.vite/
+
+# build output served by FastAPI
+backend/app/static/assets/
+backend/app/static/index.html
+
+# editors / os
+.vscode/
+.idea/
+.DS_Store
+tsconfig.tsbuildinfo

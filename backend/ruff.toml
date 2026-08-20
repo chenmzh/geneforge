@@ -1,0 +1,20 @@
+line-length = 120
+target-version = "py311"
+
+[lint]
+select = ["E", "F", "W", "I", "N", "UP", "B", "C4", "SIM"]
+ignore = [
+  "E501",   # long lines are handled by the formatter
+  "B008",   # FastAPI Depends() in defaults is idiomatic
+  "N818",   # exception names without the Error suffix are fine here
+  "SIM108", # ternaries are not always clearer
+]
+
+[lint.per-file-ignores]
+"tests/*" = ["E402", "F401"]
+"alembic/*" = ["E402", "F401", "N999"]
+# Unit-suffixed names (na_mM, mg_mM, primer_conc_nM) follow the thermodynamics
+# literature and are part of the public API surface; renaming them to snake_case
+# would make the scientific parameters harder to read, not easier.
+"app/bio/primers.py" = ["N803", "N815"]
+"app/schemas/tools.py" = ["N815"]

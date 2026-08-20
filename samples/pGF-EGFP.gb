@@ -1,0 +1,125 @@
+LOCUS       pGF-EGFP               2832 bp    ds-DNA  circular SYN 20-AUG-2026
+DEFINITION  GeneForge synthetic demo plasmid: T7/lac driven EGFP-P2A-His-FLAG
+            cassette
+ACCESSION   .
+VERSION     .
+KEYWORDS    GeneForge; demo; synthetic
+SOURCE      synthetic DNA construct
+  ORGANISM  synthetic DNA construct
+COMMENT     Exported by GeneForge
+FEATURES             Location/Qualifiers
+     promoter        421..438
+                     /label="T7 promoter"
+                     /note="synthetic teaching construct"
+                     /ApEinfo_fwdcolor="#f5a623"
+                     /ApEinfo_revcolor="#f5a623"
+     protein_bind    439..461
+                     /label="lac operator"
+                     /note="synthetic teaching construct"
+                     /ApEinfo_fwdcolor="#8e44ad"
+                     /ApEinfo_revcolor="#8e44ad"
+     RBS             473..485
+                     /label="T7 RBS"
+                     /note="synthetic teaching construct"
+                     /ApEinfo_fwdcolor="#e67e22"
+                     /ApEinfo_revcolor="#e67e22"
+     misc_feature    486..542
+                     /label="MCS"
+                     /note="synthetic teaching construct"
+                     /ApEinfo_fwdcolor="#7f8c8d"
+                     /ApEinfo_revcolor="#7f8c8d"
+     regulatory      543..551
+                     /label="Kozak"
+                     /note="synthetic teaching construct"
+                     /ApEinfo_fwdcolor="#f39c12"
+                     /ApEinfo_revcolor="#f39c12"
+     CDS             552..1271
+                     /label="EGFP"
+                     /note="synthetic teaching construct"
+                     /ApEinfo_fwdcolor="#4f8ef7"
+                     /ApEinfo_revcolor="#4f8ef7"
+     CDS             1281..1346
+                     /label="P2A"
+                     /note="synthetic teaching construct"
+                     /ApEinfo_fwdcolor="#4f8ef7"
+                     /ApEinfo_revcolor="#4f8ef7"
+     CDS             1347..1364
+                     /label="6xHis tag"
+                     /note="synthetic teaching construct"
+                     /ApEinfo_fwdcolor="#4f8ef7"
+                     /ApEinfo_revcolor="#4f8ef7"
+     CDS             1365..1388
+                     /label="FLAG tag"
+                     /note="synthetic teaching construct"
+                     /ApEinfo_fwdcolor="#4f8ef7"
+                     /ApEinfo_revcolor="#4f8ef7"
+     terminator      1392..1439
+                     /label="T7 terminator"
+                     /note="synthetic teaching construct"
+                     /ApEinfo_fwdcolor="#d0021b"
+                     /ApEinfo_revcolor="#d0021b"
+     polyA_signal    1440..1483
+                     /label="bGH poly(A) signal (partial)"
+                     /note="synthetic teaching construct"
+                     /ApEinfo_fwdcolor="#c0392b"
+                     /ApEinfo_revcolor="#c0392b"
+     protein_bind    1484..1517
+                     /label="loxP"
+                     /note="synthetic teaching construct"
+                     /ApEinfo_fwdcolor="#8e44ad"
+                     /ApEinfo_revcolor="#8e44ad"
+     CDS             complement(2078..2132)
+                     /label="AmpR (partial CDS)"
+                     /note="synthetic teaching construct"
+                     /ApEinfo_fwdcolor="#4f8ef7"
+                     /ApEinfo_revcolor="#4f8ef7"
+ORIGIN
+        1 cgcacgtaag atgtacgttg cgagcgtcca gcaagaccac acagcctggc ccaataaata
+       61 gcccgacaga cgcagtaaca gtgcatctaa tgagtttgag aatggattac catcgatact
+      121 ctggttatgt gacacgacag ccgcggcttg gctaggcact attatcagta gtgtaaccct
+      181 cagaagcccg ttcaaactag aatctagctc atgtggtaat gcccgactag gtattgatct
+      241 agcgcaccac aagtgtccta aaggaccttt tgaccatgcg gtgacgtagt tgagttgaga
+      301 aacgcgattc aatacgcgct atttggattg cgctcggcca taactaaatc actgcgttct
+      361 aacttaatag ttctaggatc aggtaccttt aagttaattt acgtaggagt cggtcatcca
+      421 taatacgact cactataggg aattgtgagc ggataacaat tggatctcga ccaggagata
+      481 tacataagct tgcatgcctg caggtcgact ctagaggatc cccgggtacc gagctcgaat
+      541 tcgccaccat gatggtgagc aagggcgagg agctgttcac cggggtggtg cccatcctgg
+      601 tcgagctgga cggcgacgta aacggccaca agttcagcgt gtccggcgag ggcgagggcg
+      661 atgccaccta cggcaagctg accctgaagt tcatctgcac caccggcaag ctgcccgtgc
+      721 cctggcccac cctcgtgacc accctgacct acggcgtgca gtgcttcagc cgctaccccg
+      781 accacatgaa gcagcacgac ttcttcaagt ccgccatgcc cgaaggctac gtccaggagc
+      841 gcaccatctt cttcaaggac gacggcaact acaagacccg cgccgaggtg aagttcgagg
+      901 gcgacaccct ggtgaaccgc atcgagctga agggcatcga cttcaaggag gacggcaaca
+      961 tcctggggca caagctggag tacaactaca acagccacaa cgtctatatc atggccgaca
+     1021 agcagaagaa cggcatcaag gtgaacttca agatccgcca caacatcgag gacggcagcg
+     1081 tgcagctcgc cgaccactac cagcagaaca cccccatcgg cgacggcccc gtgctgctgc
+     1141 ccgacaacca ctacctgagc acccagtccg ccctgagcaa agaccccaac gagaagcgcg
+     1201 atcacatggt cctgctggag ttcgtgaccg ccgccgggat cactctcggc atggacgagc
+     1261 tgtacaagta aggtggctct ggaagcggag ctactaactt cagcctgctg aagcaggctg
+     1321 gagacgtgga ggagaaccct ggacctcacc accaccacca ccacgactac aaagacgatg
+     1381 acgacaagtg actagcataa ccccttgggg cctctaaacg ggtcttgagg ggttttttgc
+     1441 tgtgccttct agttgccagc catctgttgt ttgcccctcc cccataactt cgtataatgt
+     1501 atgctatacg aagttattac cggcaccgga tttttctaga agttcttgtg aagcgaattc
+     1561 gctagacgct tgtgagcggc tcgtgcacgt ggtgtcccgc tacagacggc gcactgagaa
+     1621 atcaaggata tatgcacacg cgtccgcata attttgctaa tatgtgaatc cgggataaaa
+     1681 ctaaaagggt tagcccgagg ataataacgt aacgagacag cgccacggca tagtatatat
+     1741 gaggtgtgaa ctgataggtt ccattaaata gtaatacatc cggaatggtc ggaagcgcaa
+     1801 gggattgaca agggcttggc caacagggag tcagattcgt gagtctccga tacggatgag
+     1861 cacgatcact gtttgcgagc ctctaatgcc taaaggcggc gtgcataaga atctgtacgg
+     1921 cactttgtcg ccgcctgatg cgtgtggcga gtgaatcggt tgcgtacgtc cactggagcg
+     1981 cttccccggc aatccatcgc tgtagcacca gagattcgaa aactgctaga ctcggacgca
+     2041 tgagacgaaa tacatcctgc attttgagct agcagggatg agtattcaac atttccgtgt
+     2101 cgcccttatt cccttttttg cggcattttg ccaatgtttg gtttaagcgc aatttgggga
+     2161 gggggatgtg tagagcgagt caattacctt gaacgtagca gaggggacaa agcaagacga
+     2221 acgtaggtac ccaacaactg gttacgacac gtgaacccta tctgtaggaa gcggcgatag
+     2281 ggacaagcaa ggcgttctcg gccgtactgc ctccgttctt gacaactccg cccttgctgt
+     2341 gatctcatcg acccgatgag ccccacagtc ggtgccctag acgatggccc aacccgagcc
+     2401 acatcgagaa aagaacctca taccacccag aagccccaac ccttggctga aaccttcgaa
+     2461 cgttttctcg gacctcccgc gggccgagga gaacgacaat atagcgggtt gaatgtgcgt
+     2521 taactcatgg acgagccctg ctcttgatga ggcttcctcc cccaacgata aggatgcggg
+     2581 ggattagcct tctccacggc ataataaacc cttatcgacg ctgccctgct cggtcgtcgc
+     2641 catctgctcc catatggccg cttctgtggc aaacttagta gagggggtac aagccgcaca
+     2701 ggccgtatcg gtgtgcggcg gaagttcatg ggatcggtcc ggtgggcact ttgcgtgtgc
+     2761 acctggtgtt gcatgccaca cctgtgctac gtggggtgtt agtacggtgt aattacttcc
+     2821 acttgggttg tg
+//

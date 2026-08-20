@@ -1,0 +1,15 @@
+**/.venv/
+**/__pycache__/
+**/*.pyc
+**/node_modules/
+**/.pytest_cache/
+**/.ruff_cache/
+backend/geneforge.db*
+backend/storage/
+backend/app/static/assets/
+backend/app/static/index.html
+.git/
+.env
+docs/
+*.md
+!README.md

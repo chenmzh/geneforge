@@ -1,0 +1,6 @@
+# pnpm 10+ reads these settings here (no longer from package.json):
+#  - esbuild ships an install script that Vite's bundler needs
+#  - skip the pre-run lockfile gate so `pnpm run build` works offline/in CI images
+onlyBuiltDependencies:
+  - esbuild
+verifyDepsBeforeRun: false

@@ -1,0 +1,106 @@
+name: geneforge
+
+# Production-ish stack: Postgres + Redis + API + Celery worker + nginx.
+# For a laptop run without Docker see the README quick start (SQLite + local queue).
+
+x-app-env: &app-env
+  ENVIRONMENT: ${ENVIRONMENT:-production}
+  DEBUG: ${DEBUG:-false}
+  SECRET_KEY: ${SECRET_KEY:?set SECRET_KEY in .env}
+  DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-geneforge}:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-geneforge}
+  CELERY_BROKER_URL: redis://redis:6379/0
+  CELERY_RESULT_BACKEND: redis://redis:6379/1
+  FIRST_SUPERUSER_EMAIL: ${FIRST_SUPERUSER_EMAIL:-admin@geneforge.local}
+  FIRST_SUPERUSER_PASSWORD: ${FIRST_SUPERUSER_PASSWORD:?set FIRST_SUPERUSER_PASSWORD}
+  ALLOW_REGISTRATION: ${ALLOW_REGISTRATION:-false}
+  CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:8080}
+  MAX_SEQUENCE_LENGTH: ${MAX_SEQUENCE_LENGTH:-5000000}
+  EXTERNAL_PROXY_ENABLED: ${EXTERNAL_PROXY_ENABLED:-true}
+  EXTERNAL_PROXY_ALLOWLIST: ${EXTERNAL_PROXY_ALLOWLIST:-eutils.ncbi.nlm.nih.gov,rest.ensembl.org,rest.uniprot.org,www.ebi.ac.uk}
+  STORAGE_DIR: /app/backend/storage
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-geneforge}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-geneforge}
+      POSTGRES_INITDB_ARGS: "--data-checksums"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-geneforge} -d ${POSTGRES_DB:-geneforge}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: ["redis-server", "--save", "60", "1", "--appendonly", "no"]
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      <<: *app-env
+    volumes:
+      - storage:/app/backend/storage
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    expose:
+      - "8000"
+
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      <<: *app-env
+    volumes:
+      - storage:/app/backend/storage
+    depends_on:
+      api:
+        condition: service_started
+      redis:
+        condition: service_healthy
+    command:
+      - sh
+      - -c
+      - exec celery -A app.tasks.celery_app:celery_app worker --loglevel=info --concurrency=${WORKER_CONCURRENCY:-4}
+    healthcheck:
+      test: ["CMD-SHELL", "celery -A app.tasks.celery_app:celery_app inspect ping -d celery@$$HOSTNAME || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  web:
+    image: nginx:1.27-alpine
+    restart: unless-stopped
+    ports:
+      - "${HTTP_PORT:-8080}:80"
+    volumes:
+      - ./deploy/nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - api
+
+volumes:
+  pgdata:
+  redisdata:
+  storage:

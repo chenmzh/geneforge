@@ -1,0 +1,167 @@
+"""Generate the demo sequences shipped with GeneForge.
+
+The demo construct is a *synthetic* teaching plasmid: real, well-known short
+elements (T7 promoter, lac operator, a pUC-style MCS, epitope tags, the EGFP CDS)
+joined by explicitly labelled synthetic backbone filler.  Nothing here pretends
+to be a real catalogue plasmid, and the EGFP CDS is verified by translation.
+
+Run:  python -m scripts.make_samples  (from the backend directory)
+"""
+from __future__ import annotations
+
+import random
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+from app.bio.seqio import Feature, SeqRecord, write_fasta, write_genbank  # noqa: E402
+from app.bio.translate import translate  # noqa: E402
+
+SAMPLES = Path(__file__).resolve().parents[2] / "samples"
+
+T7 = "TAATACGACTCACTATAG"
+LAC_OP = "GGAATTGTGAGCGGATAACAATT"
+RBS = "AGGAGATATACAT"
+MCS = "AAGCTTGCATGCCTGCAGGTCGACTCTAGAGGATCCCCGGGTACCGAGCTCGAATTC"
+KOZAK = "GCCACCATGG"
+HIS6 = "CACCACCACCACCACCAC"
+FLAG = "GACTACAAAGACGATGACGACAAG"
+P2A = "GGAAGCGGAGCTACTAACTTCAGCCTGCTGAAGCAGGCTGGAGACGTGGAGGAGAACCCTGGACCT"
+LOXP = "ATAACTTCGTATAATGTATGCTATACGAAGTTAT"
+T7_TERM = "CTAGCATAACCCCTTGGGGCCTCTAAACGGGTCTTGAGGGGTTTTTTG"
+BGH = "CTGTGCCTTCTAGTTGCCAGCCATCTGTTGTTTGCCCCTCCCCC"
+AMPR_START = "ATGAGTATTCAACATTTCCGTGTCGCCCTTATTCCCTTTTTTGCGGCATTTTGCC"
+
+EGFP = (
+    "ATGGTGAGCAAGGGCGAGGAGCTGTTCACCGGGGTGGTGCCCATCCTGGTCGAGCTGGACGGCGACGTAAACGGCCACAAG"
+    "TTCAGCGTGTCCGGCGAGGGCGAGGGCGATGCCACCTACGGCAAGCTGACCCTGAAGTTCATCTGCACCACCGGCAAGCTG"
+    "CCCGTGCCCTGGCCCACCCTCGTGACCACCCTGACCTACGGCGTGCAGTGCTTCAGCCGCTACCCCGACCACATGAAGCAG"
+    "CACGACTTCTTCAAGTCCGCCATGCCCGAAGGCTACGTCCAGGAGCGCACCATCTTCTTCAAGGACGACGGCAACTACAAG"
+    "ACCCGCGCCGAGGTGAAGTTCGAGGGCGACACCCTGGTGAACCGCATCGAGCTGAAGGGCATCGACTTCAAGGAGGACGGC"
+    "AACATCCTGGGGCACAAGCTGGAGTACAACTACAACAGCCACAACGTCTATATCATGGCCGACAAGCAGAAGAACGGCATC"
+    "AAGGTGAACTTCAAGATCCGCCACAACATCGAGGACGGCAGCGTGCAGCTCGCCGACCACTACCAGCAGAACACCCCCATC"
+    "GGCGACGGCCCCGTGCTGCTGCCCGACAACCACTACCTGAGCACCCAGTCCGCCCTGAGCAAAGACCCCAACGAGAAGCGC"
+    "GATCACATGGTCCTGCTGGAGTTCGTGACCGCCGCCGGGATCACTCTCGGCATGGACGAGCTGTACAAGTAA"
+)
+EGFP_PROTEIN = (
+    "MVSKGEELFTGVVPILVELDGDVNGHKFSVSGEGEGDATYGKLTLKFICTTGKLPVPWPTLVTTLTYGVQCFSRYPDHMKQ"
+    "HDFFKSAMPEGYVQERTIFFKDDGNYKTRAEVKFEGDTLVNRIELKGIDFKEDGNILGHKLEYNYNSHNVYIMADKQKNGI"
+    "KVNFKIRHNIEDGSVQLADHYQQNTPIGDGPVLLPDNHYLSTQSALSKDPNEKRDHMVLLEFVTAAGITLGMDELYK"
+)
+
+
+def filler(length: int, seed: int, gc: float = 0.5) -> str:
+    """Deterministic synthetic filler with a target GC and no in-frame stops."""
+    rng = random.Random(seed)
+    out = []
+    while len(out) < length:
+        pool = "GC" if rng.random() < gc else "AT"
+        out.append(rng.choice(pool))
+    return "".join(out[:length])
+
+
+def build_demo_plasmid() -> SeqRecord:
+    assert translate(EGFP, to_stop=True) == EGFP_PROTEIN, "EGFP CDS failed translation check"
+
+    parts: list[tuple[str, str, str, int]] = [
+        ("backbone filler 1", filler(420, 11, 0.48), "misc_feature", 1),
+        ("T7 promoter", T7, "promoter", 1),
+        ("lac operator", LAC_OP, "protein_bind", 1),
+        ("linker", "GGATCTCGACC", "misc_feature", 1),
+        ("T7 RBS", RBS, "RBS", 1),
+        ("MCS", MCS, "misc_feature", 1),
+        ("Kozak", KOZAK[:-1], "regulatory", 1),
+        ("EGFP", EGFP, "CDS", 1),
+        ("linker", "GGTGGCTCT", "misc_feature", 1),
+        ("P2A", P2A, "CDS", 1),
+        ("6xHis tag", HIS6, "CDS", 1),
+        ("FLAG tag", FLAG, "CDS", 1),
+        ("stop", "TGA", "misc_feature", 1),
+        ("T7 terminator", T7_TERM, "terminator", 1),
+        ("bGH poly(A) signal (partial)", BGH, "polyA_signal", 1),
+        ("loxP", LOXP, "protein_bind", 1),
+        ("backbone filler 2", filler(560, 23, 0.52), "misc_feature", 1),
+        ("AmpR (partial CDS)", AMPR_START, "CDS", -1),
+        ("backbone filler 3", filler(700, 37, 0.51), "misc_feature", 1),
+    ]
+
+    sequence = ""
+    features: list[Feature] = []
+    for name, seq, ftype, strand in parts:
+        start = len(sequence)
+        sequence += seq
+        if name.startswith(("backbone", "linker", "stop")):
+            continue
+        features.append(
+            Feature(
+                type=ftype,
+                segments=[(start, start + len(seq))],
+                strand=strand,
+                name=name,
+                qualifiers={"label": name, "note": "synthetic teaching construct"},
+            )
+        )
+
+    rec = SeqRecord(
+        name="pGF-EGFP",
+        description="GeneForge synthetic demo plasmid: T7/lac driven EGFP-P2A-His-FLAG cassette",
+        sequence=sequence,
+        topology="circular",
+        molecule_type="ds-DNA",
+        features=features,
+        annotations={
+            "source": "synthetic DNA construct",
+            "organism": "synthetic DNA construct",
+            "keywords": "GeneForge; demo; synthetic",
+            "comment": "Synthetic demo construct generated by scripts/make_samples.py",
+        },
+    )
+    return rec
+
+
+def build_insert() -> SeqRecord:
+    seq = "GGATCC" + KOZAK + EGFP[3:300] + "GGGTACC"
+    return SeqRecord(
+        name="insert_egfp_frag",
+        description="BamHI/KpnI flanked EGFP N-terminal fragment (demo insert)",
+        sequence=seq,
+        topology="linear",
+        features=[
+            Feature(type="CDS", segments=[(16, 16 + 297)], strand=1, name="EGFP fragment"),
+        ],
+    )
+
+
+def build_sanger_read(plasmid: SeqRecord) -> SeqRecord:
+    """A mock Sanger read: subregion with one SNP and a 3 bp deletion."""
+    start = 460
+    read = list(plasmid.sequence[start : start + 900])
+    read[120] = "A" if read[120] != "A" else "G"
+    del read[400:403]
+    return SeqRecord(
+        name="sanger_read_01",
+        description="Mock Sanger read of pGF-EGFP with 1 substitution and a 3 bp deletion",
+        sequence="".join(read),
+        topology="linear",
+    )
+
+
+def main() -> None:
+    SAMPLES.mkdir(parents=True, exist_ok=True)
+    plasmid = build_demo_plasmid()
+    insert = build_insert()
+    read = build_sanger_read(plasmid)
+
+    (SAMPLES / "pGF-EGFP.gb").write_text(write_genbank(plasmid), encoding="utf-8")
+    (SAMPLES / "insert_egfp_frag.gb").write_text(write_genbank(insert), encoding="utf-8")
+    (SAMPLES / "demo_sequences.fasta").write_text(write_fasta([plasmid, insert, read]), encoding="utf-8")
+    (SAMPLES / "sanger_read_01.fasta").write_text(write_fasta([read]), encoding="utf-8")
+    print(f"plasmid   {plasmid.name}: {plasmid.length} bp, {len(plasmid.features)} features")
+    print(f"insert    {insert.name}: {insert.length} bp")
+    print(f"read      {read.name}: {read.length} bp")
+    print(f"written to {SAMPLES}")
+
+
+if __name__ == "__main__":
+    main()

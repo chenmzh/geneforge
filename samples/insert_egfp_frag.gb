@@ -1,0 +1,21 @@
+LOCUS       insert_egfp_frag       320 bp    ds-DNA  linear   SYN 20-AUG-2026
+DEFINITION  BamHI/KpnI flanked EGFP N-terminal fragment (demo insert)
+ACCESSION   .
+VERSION     .
+KEYWORDS    .
+SOURCE      synthetic DNA construct
+  ORGANISM  synthetic DNA construct
+COMMENT     Exported by GeneForge
+FEATURES             Location/Qualifiers
+     CDS             17..313
+                     /label="EGFP fragment"
+                     /ApEinfo_fwdcolor="#4f8ef7"
+                     /ApEinfo_revcolor="#4f8ef7"
+ORIGIN
+        1 ggatccgcca ccatgggtga gcaagggcga ggagctgttc accggggtgg tgcccatcct
+       61 ggtcgagctg gacggcgacg taaacggcca caagttcagc gtgtccggcg agggcgaggg
+      121 cgatgccacc tacggcaagc tgaccctgaa gttcatctgc accaccggca agctgcccgt
+      181 gccctggccc accctcgtga ccaccctgac ctacggcgtg cagtgcttca gccgctaccc
+      241 cgaccacatg aagcagcacg acttcttcaa gtccgccatg cccgaaggct acgtccagga
+      301 gcgcaccatc ttcgggtacc
+//
